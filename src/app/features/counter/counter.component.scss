@@ -1,0 +1,42 @@
+button,
+input {
+  font-family: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+  border: 0;
+  outline: 0;
+  color: #fff;
+}
+
+input[type="number"],
+input[type="text"] {
+  max-width: 100px;
+  font-weight: bold;
+  margin: 0 0 20px;
+  padding: 8px 12px 10px 12px;
+  border: 0px solid rgb(0, 0, 0);
+  border-bottom-width: 2px;
+  background: none;
+  color: rgb(0, 0, 0);
+}
+
+button,
+input[type="submit"] {
+  width: 150px;
+  margin: 0 0 20px;
+  padding: 8px 0 10px 0;
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, .75);
+}
+
+.countdownHolder {
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+  width: 100%;
+  margin: 0 auto;
+  font: 120px/1.5 'Open Sans Condensed', sans-serif;
+  text-align: center;
+  letter-spacing: -3px;
+}

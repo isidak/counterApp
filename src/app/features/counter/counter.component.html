@@ -1,0 +1,90 @@
+<div class="container" [formGroup]="form">
+  <ng-container *ngIf="count$ | async as count">
+    <div class="container form-horizontal">
+      <div class="row row-cols-auto justify-content-center">
+        <p style="font-size:40px;">
+          Press Start to run counter
+        </p>
+      </div>
+      <div class="countdownHolder row row-cols-auto justify-content-center">
+      <span>
+        {{count.count}}
+      </span>
+      </div>
+      <div class="row row-cols-auto justify-content-center">
+        <div class="col">
+          <button type="button" class="btn btn-primary" (click)="start()">
+            Start
+          </button>
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-primary" (click)="pause()">
+            Pause
+          </button>
+        </div>
+      </div>
+      <div class="row row-cols-auto justify-content-center">
+        <div class="col form-inline">
+          <div class="row">
+            <div class="input-group form-inline">
+              <div class="form-inline">
+                <button type="button" class="btn btn-primary" (click)="setTo(setToControl?.value)">
+                  Set To
+                </button>
+                <input class="form-control-inline w-auto setTo" type="number" formControlName="setTo"/>
+                <div *ngIf="setToControl?.invalid && (setToControl?.dirty || setToControl?.touched)"
+                     class="alert alert-danger">
+                  <div *ngIf="setToControl?.errors">
+                    SetTo is required.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col form-inline">
+          <button type="button" class="btn btn-danger" (click)="reset()">
+            Reset
+          </button>
+        </div>
+      </div>
+      <div class="row row-cols-auto justify-content-center">
+        <div class="col">
+          <button type="button" class="btn btn-primary" (click)="countUp()">
+            Count Up
+          </button>
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-primary" (click)="countDown()">
+            Count Down
+          </button>
+        </div>
+      </div>
+      <div class="row row-cols-auto justify-content-center">
+        <div class="col form-inline">
+          <label>
+            Tick Speed
+          </label>
+          <input class="form-control w-auto" type="number" formControlName="tickSpeed" min="1"/>
+          <div *ngIf="tickSpeedControl?.invalid && (tickSpeedControl?.dirty || tickSpeedControl?.touched)"
+               class="alert alert-danger">
+            <div *ngIf="tickSpeedControl?.errors">
+              Input a valid TickSpeed value.
+            </div>
+          </div>
+        </div>
+        <div class="col form-inline">
+          <label> Count Diff
+          </label>
+          <input class="form-control w-auto" type="number" formControlName="countDiff" min="1"/>
+          <div *ngIf="countDiffControl?.invalid && (countDiffControl?.dirty || countDiffControl?.touched)"
+               class="alert alert-danger">
+            <div *ngIf="countDiffControl?.errors">
+              Input a valid CountDiff value.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
