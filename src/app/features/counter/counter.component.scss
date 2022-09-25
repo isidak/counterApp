@@ -1,5 +1,4 @@
-button,
-input {
+button{
   font-family: inherit;
   font-size: 100%;
   vertical-align: baseline;
@@ -8,8 +7,7 @@ input {
   color: #fff;
 }
 
-input[type="number"],
-input[type="text"] {
+input {
   max-width: 100px;
   font-weight: bold;
   margin: 0 0 20px;

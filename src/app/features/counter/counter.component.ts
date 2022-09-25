@@ -1,8 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {CounterStateService} from "../../services/counter-state/counter-state.service";
 import {Observable, Subscription} from "rxjs";
-import {Counter} from "../../types/counter/counter";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-counter',
@@ -10,20 +9,20 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
   styleUrls: ['./counter.component.scss']
 })
 export class CounterComponent implements OnInit, OnDestroy {
-  count$: Observable<Partial<Counter>>;
+  count$: Observable<number | undefined>;
   form: FormGroup;
   private subscription = new Subscription()
 
   get setToControl() {
-    return this.form.get('setTo')
+    return this.form.get('setTo') as FormControl;
   }
 
   get tickSpeedControl() {
-    return this.form.get('tickSpeed')
+    return this.form.get('tickSpeed') as FormControl;
   }
 
   get countDiffControl() {
-    return this.form.get('countDiff')
+    return this.form.get('countDiff') as FormControl;
   }
 
   constructor(
@@ -76,7 +75,7 @@ export class CounterComponent implements OnInit, OnDestroy {
     this.patchFormValues();
   }
 
-  private getCount(): Observable<Partial<Counter>> {
+  private getCount(): Observable<number | undefined> {
     return this.counterState.getCount();
   }
 

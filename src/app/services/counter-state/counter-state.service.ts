@@ -22,6 +22,7 @@ import {tap} from "rxjs/operators";
   providedIn: 'root'
 })
 export class CounterStateService {
+
   private initialCounterConfig: Counter = {
     isTicking: false,
     count: 0,
@@ -79,7 +80,33 @@ export class CounterStateService {
     this.programmaticCommand$.next(this.initialCounter.value)
   }
 
-  private sourceEvents() {
+  /**
+   * Get initial counter count
+   * @return {Observable<number | undefined>}
+   */
+  getCount(): Observable<number | undefined> {
+    return merge(
+      this.commandFromTick(),
+      this.counterState()
+    ).pipe(
+      filter((value) => !!value),
+      map((state) => state?.count)
+    )
+  }
+
+  /**
+   * Get initial counter state value
+   * @return {Counter}
+   */
+  getInitialCounterSnapshot(): Counter {
+    return this.initialCounter.value
+  }
+
+  /**
+   * Combines all input events into one stream
+   * @return {Observable<Partial<Counter>>}
+   */
+  private sourceEvents(): Observable<Partial<Counter>> {
     return merge(
       this.start$.pipe(distinctUntilChanged()),
       this.countUp$.pipe(distinctUntilChanged()),
@@ -92,23 +119,10 @@ export class CounterStateService {
     )
   }
 
-
-  getCount(): Observable<Partial<Counter>> {
-    return merge(
-      this.commandFromTick(),
-      this.counterState()
-    ).pipe(
-      filter((value) => !!value),
-      map((state) => {
-        return {count: state?.count}
-      })
-    )
-  }
-
-  getInitialCounterSnapshot(): Counter {
-    return this.initialCounter.value
-  }
-
+  /**
+   * Creates current counter state based on source events
+   * @return {Observable<Counter>}
+   */
   private counterState(): Observable<Counter> {
     return this.sourceEvents().pipe(
       startWith(this.initialCounter.value),
@@ -116,21 +130,26 @@ export class CounterStateService {
     )
   }
 
-  private getIsTicking(): Observable<boolean> {
-    return this.counterState().pipe(
-      map((state) => state.isTicking),
-      distinctUntilChanged()
+  /**
+   * Changes counter state when counter is running
+   * @return {Observable<null>}
+   */
+  private commandFromTick(): Observable<null> {
+    return this.counterUpdateTrigger().pipe(
+      withLatestFrom(this.counterState()),
+      tap(([command, state]) => this.programmaticCommand$.next(
+          {count: state.count + state.countDiff * (state.countUp ? 1 : -1)}
+        )
+      ),
+      map(() => null)
     )
   }
 
-  private getTickSpeed(): Observable<number> {
-    return this.counterState().pipe(
-      map((state) => state.tickSpeed),
-      distinctUntilChanged()
-    )
-  }
-
-  private timerUpdateTrigger(): Observable<any> {
+  /**
+   * Triggers counter to run based on isTicking and TickSpeed events
+   * @return {Observable<0>}
+   */
+  private counterUpdateTrigger(): Observable<any> {
     return combineLatest([
       this.getIsTicking(),
       this.getTickSpeed()]
@@ -138,14 +157,25 @@ export class CounterStateService {
       switchMap(([isTicking, tickSpeed]) => isTicking ? timer(0, tickSpeed) : NEVER))
   }
 
-  private commandFromTick(): Observable<null> {
-    return this.timerUpdateTrigger().pipe(
-      withLatestFrom(this.counterState()),
-      tap(([command, state]) => this.programmaticCommand$.next(
-          {count: state.count + state.countDiff * (state.countUp ? 1 : -1)}
-        )
-      ),
-      map(() => null)
+  /**
+   * Monitors change of isTicking state of the counter
+   * @return {Observable<boolean>}
+   */
+  private getIsTicking(): Observable<boolean> {
+    return this.counterState().pipe(
+      map((state) => state.isTicking),
+      distinctUntilChanged()
+    )
+  }
+
+  /**
+   * Monitors tickSpeed state of the counter
+   * @return {Observable<number>}
+   */
+  private getTickSpeed(): Observable<number> {
+    return this.counterState().pipe(
+      map((state) => state.tickSpeed),
+      distinctUntilChanged()
     )
   }
 
